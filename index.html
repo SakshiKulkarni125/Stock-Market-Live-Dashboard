@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Live Share Market Dashboard — Global + Crypto</title>
+  <style>
+    :root{--bg:#0f172a;--panel:#111827;--muted:#94a3b8;--text:#e5e7eb;--accent:#22d3ee}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font:400 15px/1.45 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto}
+    header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #1f2937;background:#0b1220;position:sticky;top:0;z-index:10}
+    header h1{font-size:18px;margin:0}
+    .wrap{max-width:1200px;margin:0 auto;padding:20px}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+    .card{background:var(--panel);border:1px solid #1f2937;border-radius:14px;overflow:hidden}
+    .span-12{grid-column:span 12}
+    .span-8{grid-column:span 8}
+    .span-4{grid-column:span 4}
+    .span-6{grid-column:span 6}
+    .card h3{margin:0;padding:12px 14px;border-bottom:1px solid #1f2937;color:#cbd5e1;font-size:13px;text-transform:uppercase;letter-spacing:.08em}
+    .pad{padding:10px}
+    .bar{display:flex;gap:10px;align-items:center}
+    input,button,select{background:#0b1220;border:1px solid #263043;color:var(--text);padding:8px 10px;border-radius:10px}
+    button{cursor:pointer}
+    .hint{color:var(--muted);font-size:12px;margin-top:6px}
+    @media (max-width:1024px){.span-8,.span-6,.span-4{grid-column:span 12}}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📈 Live Share Market Dashboard</h1>
+    <div class="bar">
+      <input id="symbolInput" placeholder="e.g. NASDAQ:TSLA or BTCUSD" size="28"/>
+      <button id="loadSymbol">Load Chart</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <!-- Ticker Tape across top -->
+    <div class="card span-12" style="margin-bottom:16px">
+      <div class="pad">
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+          {
+            "symbols": [
+              {"proName": "FOREXCOM:SPXUSD", "title": "S&P 500"},
+              {"proName": "FOREXCOM:NSXUSD", "title": "Nasdaq 100"},
+              {"proName": "NASDAQ:TSLA", "title": "Tesla"},
+              {"proName": "NYSE:NVDA", "title": "NVIDIA"},
+              {"proName": "BINANCE:BTCUSDT", "title": "Bitcoin"},
+              {"proName": "BINANCE:ETHUSDT", "title": "Ethereum"}
+            ],
+            "showSymbolLogo": true,
+            "colorTheme": "dark",
+            "isTransparent": true,
+            "displayMode": "adaptive",
+            "locale": "en"
+          }
+          </script>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Market Overview (Global + Crypto) -->
+      <div class="card span-8">
+        <h3>Market Overview</h3>
+        <div class="pad">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+            {
+              "colorTheme": "dark",
+              "dateRange": "12M",
+              "showChart": true,
+              "locale": "en",
+              "width": "100%",
+              "height": 560,
+              "isTransparent": false,
+              "showSymbolLogo": true,
+              "tabs": [
+                {"title": "Global Indices", "symbols": [
+                  {"s": "FOREXCOM:SPXUSD", "d":"S&P 500"},
+                  {"s": "FOREXCOM:NSXUSD", "d":"Nasdaq 100"},
+                  {"s": "FOREXCOM:DJI", "d":"Dow Jones"},
+                  {"s": "INDEX:FTSE", "d":"FTSE 100"},
+                  {"s": "INDEX:NKY", "d":"Nikkei 225"}
+                ]},
+                {"title": "Crypto", "symbols": [
+                  {"s": "BINANCE:BTCUSDT", "d":"Bitcoin"},
+                  {"s": "BINANCE:ETHUSDT", "d":"Ethereum"},
+                  {"s": "BINANCE:BNBUSDT", "d":"BNB"},
+                  {"s": "BINANCE:SOLUSDT", "d":"Solana"},
+                  {"s": "BINANCE:XRPUSDT", "d":"XRP"}
+                ]}
+              ]
+            }
+            </script>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Symbol Chart (dynamic) -->
+      <div class="card span-4">
+        <h3>Symbol Chart</h3>
+        <div class="pad">
+          <div id="symbolChart"></div>
+          <div class="hint">Tip: try <code>NASDAQ:AAPL</code>, <code>NYSE:NVDA</code>, <code>BINANCE:BTCUSDT</code>, <code>BINANCE:ETHUSDT</code></div>
+        </div>
+      </div>
+
+      <!-- Crypto Screener -->
+      <div class="card span-12">
+        <h3>Crypto Screener</h3>
+        <div class="pad">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js" async>
+            {
+              "width": "100%",
+              "height": 420,
+              "defaultColumn": "overview",
+              "defaultScreen": "general",
+              "market": "crypto",
+              "locale": "en",
+              "colorTheme": "dark",
+              "isTransparent": false
+            }
+            </script>
+          </div>
+        </div>
+      </div>
+
+      <!-- Economic Calendar -->
+      <div class="card span-12">
+        <h3>Economic Calendar</h3>
+        <div class="pad">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+            {
+              "colorTheme": "dark",
+              "isTransparent": false,
+              "width": "100%",
+              "height": 340,
+              "locale": "en"
+            }
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Symbol Chart Loader -->
+  <script>
+    function loadSymbolChart(symbol){
+      const target = document.getElementById('symbolChart')
+      target.innerHTML = ''
+      const wrap = document.createElement('div')
+      wrap.className = 'tradingview-widget-container'
+      const widget = document.createElement('div')
+      widget.className = 'tradingview-widget-container__widget'
+      wrap.appendChild(widget)
+      const s = document.createElement('script')
+      s.type = 'text/javascript'
+      s.src = 'https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js'
+      s.async = true
+      s.innerHTML = JSON.stringify({
+        "symbols": [[symbol]],
+        "chartOnly": false,
+        "width": "100%",
+        "height": 360,
+        "locale": "en",
+        "colorTheme": "dark",
+        "autosize": true,
+        "showVolume": true,
+        "showMA": true,
+        "hideDateRanges": false
+      })
+      wrap.appendChild(s)
+      target.appendChild(wrap)
+    }
+
+    // initial chart
+    loadSymbolChart('BINANCE:BTCUSDT')
+
+    document.getElementById('loadSymbol').addEventListener('click', ()=>{
+      const sym = (document.getElementById('symbolInput').value || '').trim()
+      if(!sym) return alert('Enter a symbol like NASDAQ:TSLA or BINANCE:BTCUSDT')
+      loadSymbolChart(sym)
+    })
+  </script>
+</body>
+</html>
